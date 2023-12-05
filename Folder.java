@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Folder extends FileSystemItem {
+class Folder extends FileSystemItem {
     private List<FileSystemItem> contents;
 
     public Folder(String name) {
@@ -22,18 +22,22 @@ public class Folder extends FileSystemItem {
         contents.remove(item);
     }
 
+    // New method to add a new folder
+    public void addFolder(Folder folder) {
+        contents.add(folder);
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
         Folder folder = (Folder) obj;
-        return Objects.equals(getName(), folder.getName()) &&
-                Objects.equals(contents, folder.contents);
+        return super.equals(obj) && Objects.equals(contents, folder.contents);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getName(), contents);
+        return Objects.hash(super.hashCode(), contents);
     }
 
     @Override

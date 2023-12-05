@@ -19,24 +19,21 @@ public class GeneralTree<T extends FileSystemItem> {
         if (node == null) {
             return;
         }
-
+    
         for (int i = 0; i < depth; i++) {
             System.out.print("  ");
         }
         System.out.println(node.getData());
-
-        for (TreeNode<T> child : node.getChildren()) {
-            printTree(child, depth + 1);
-        }
-
+    
         if (node.getData() instanceof Folder) {
             List<FileSystemItem> contents = ((Folder) node.getData()).getContents();
             for (FileSystemItem item : contents) {
-                for (int i = 0; i < depth + 1; i++) {
-                    System.out.print("  ");
-                }
-                System.out.println(item);
+                printTree(new TreeNode<>((T)item), depth + 1);
             }
+        }
+    
+        for (TreeNode<T> child : node.getChildren()) {
+            printTree(child, depth + 1);
         }
     }
 
@@ -89,9 +86,11 @@ public class GeneralTree<T extends FileSystemItem> {
 
         Folder documentsFolder = new Folder("Documents");
         Folder picturesFolder = new Folder("Pictures");
+        Folder subfolder = new Folder("Subfolder");
 
         File document1 = new File("Document1.txt", "This is the content of Document1.");
         File document2 = new File("Document2.txt", "Content of Document2.");
+        File document3 = new File("Document3.txt", "This is the content of Document3.");
         File picture1 = new File("Picture1.jpg", "Content of Picture1.");
 
         fileSystemTree.getRoot().addChild(new TreeNode<>(documentsFolder));
@@ -99,7 +98,10 @@ public class GeneralTree<T extends FileSystemItem> {
 
         documentsFolder.addFileSystemItem(document1);
         documentsFolder.addFileSystemItem(document2);
-
+        
+        documentsFolder.addFolder(subfolder);
+        subfolder.addFileSystemItem(document3);
+        
         picturesFolder.addFileSystemItem(picture1);
 
         // Printing the file system tree
@@ -107,7 +109,7 @@ public class GeneralTree<T extends FileSystemItem> {
 
         // Deleting a node and its subtree (e.g., a folder or a file)
         fileSystemTree.deleteNode(picture1);
-        fileSystemTree.deleteNode(documentsFolder);
+        //fileSystemTree.deleteNode(documentsFolder);
 
         // Printing the modified file system tree
         fileSystemTree.printTree();

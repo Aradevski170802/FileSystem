@@ -17,9 +17,5 @@ class TreeNode<T> {
     public List<TreeNode<T>> getChildren() {
         return children;
     }
-
-    public void addChild(TreeNode<T> child) {
-        children.add(child);
-    }
 }
 

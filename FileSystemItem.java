@@ -2,7 +2,13 @@ import java.util.Objects;
 
 public class FileSystemItem {
     private String name;
+    private String path = null;
 
+    public void setPath(String path){
+        this.path = path;
+    }
+
+    public String getPath(){return this.path;}
     public FileSystemItem(String name) {
         this.name = name;
     }

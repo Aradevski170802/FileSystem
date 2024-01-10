@@ -4,6 +4,7 @@ import java.util.Objects;
 
 class Folder extends FileSystemItem {
     private List<FileSystemItem> contents;
+    
 
     public Folder(String name) {
         super(name);
@@ -15,16 +16,13 @@ class Folder extends FileSystemItem {
     }
 
     public void addFileSystemItem(FileSystemItem item) {
+        
+        item.setPath(this.getPath()+"/"+item.getName());
         contents.add(item);
     }
 
     public void removeFileSystemItem(FileSystemItem item) {
         contents.remove(item);
-    }
-
-    // New method to add a new folder
-    public void addFolder(Folder folder) {
-        contents.add(folder);
     }
 
     @Override

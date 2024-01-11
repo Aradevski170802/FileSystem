@@ -1,158 +1,71 @@
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-public class GeneralTree<T extends FileSystemItem> {
-    private TreeNode<T> root;
 
-    public GeneralTree(T rootData) {
-        root = new TreeNode<>(rootData);
-        root.getData().setPath(root.getData().getName());
+public class GeneralTree extends TreeNode<FileSystemItem<?>> {
+    public GeneralTree(String rootName) {
+        super(new FileSystemItem<>(rootName), rootName, rootName);
     }
 
-    public TreeNode<T> getRoot() {
-        return root;
+    public void addChild(TreeNode<FileSystemItem<?>> child) {
+        getChildren().add(child);
+        child.getData().setPath(getPath() + "/" + child.getData().getName());
     }
 
-    public void printFolderContents(T targetFolderData) {
-        printFolderContents(root, targetFolderData, 0);
-    }
-    
-    private void printFolderContents(TreeNode<T> node, T targetFolderData, int depth) {
-        if (node == null) {
+    public void deleteFileSystemItem(FileSystemItem<?> itemToDelete) {
+        if (!isDeletable(itemToDelete)) {
+            // Cannot delete non-FileSystemItem items
+            System.out.println("Cannot delete the specified item.");
             return;
         }
-    
-        if (node.getData().equals(targetFolderData)) {
-            printTree(node, depth);
-            return;  // Stop recursion to avoid printing the entire tree
-        }
-    
-        for (TreeNode<T> child : node.getChildren()) {
-            printFolderContents(child, targetFolderData, depth + 1);
-        }
+
+        deleteFileSystemItem(this, itemToDelete);
     }
 
-    public void printTree() {
-        printTree(root, 0);
-    }
-   @SuppressWarnings("unchecked")
-    private void printTree(TreeNode<T> node, int depth) {
-        if (node == null) {
-            return;
-        }
-    
-        for (int i = 0; i < depth; i++) {
-            System.out.print("  ");
-        }
-        System.out.println(node.getData());
-        
-        if (node.getData() instanceof Folder) {
-            List<FileSystemItem> contents = ((Folder) node.getData()).getContents();
-            for (FileSystemItem item : contents) {
-                printTree(new TreeNode<>((T)item), depth + 1);
+    private void deleteFileSystemItem(TreeNode<FileSystemItem<?>> currentNode, FileSystemItem<?> itemToDelete) {
+        List<TreeNode<FileSystemItem<?>>> children = currentNode.getChildren();
+        Iterator<TreeNode<FileSystemItem<?>>> iterator = children.iterator();
+
+        while (iterator.hasNext()) {
+            TreeNode<FileSystemItem<?>> child = iterator.next();
+            if (child.getData().equals(itemToDelete)) {
+                iterator.remove();
+                return;
+            }
+
+            // Recursively search for the item in the children, considering FileSystemItem
+            if (child.getData() instanceof FileSystemItem) {
+                deleteFileSystemItem(child, itemToDelete);
             }
         }
+    }
+
+    private boolean isDeletable(FileSystemItem<?> item) {
+        return item instanceof FileSystemItem;
+    }
+
     
-        for (TreeNode<T> child : node.getChildren()) {
+
+    @Override
+    public void printTree() {
+        printTree(this, 0);
+    }
+
+    private void printTree(TreeNode<FileSystemItem<?>> node, int depth) {
+        if (node == null) {
+            return;
+        }
+
+        StringBuilder indentation = new StringBuilder();
+        for (int i = 0; i < depth; i++) {
+            indentation.append("  ");
+        }
+
+        System.out.println(indentation + node.getData().getName() + " (Path: " + node.getData().getPath() + ")");
+
+        for (TreeNode<FileSystemItem<?>> child : node.getChildren()) {
             printTree(child, depth + 1);
         }
-    }
-
-    public void deleteNode(T data) {
-        deleteNode(root, null, data);
-    }
-    
-    private void deleteNode(TreeNode<T> currentNode, TreeNode<T> parentNode, T data) {
-        if (currentNode == null) {
-            return;
-        }
-    
-        if (currentNode.getData().equals(data)) {
-            if (parentNode != null) {
-                parentNode.getChildren().remove(currentNode);
-            } else {
-                //If the node to delete is the root, set a new root
-                if (!currentNode.getChildren().isEmpty()) {
-                    root = currentNode.getChildren().get(0);
-                } else{
-                    root = null;
-                }
-            }
-    
-            // Recursively delete all children (subtree)
-            for (int i = 0; i < currentNode.getChildren().size(); i++) {
-                TreeNode<T> child = currentNode.getChildren().get(i);
-                deleteNode(child, currentNode, child.getData());
-            }
-            return;
-        }
-    
-        List<TreeNode<T>> children = currentNode.getChildren();
-        for (int i = 0; i < children.size(); i++) {
-            TreeNode<T> child = children.get(i);
-            deleteNode(child, currentNode, data);
-        }
-    
-        // If the current node is a folder, check its contents
-        if (currentNode.getData() instanceof Folder) {
-            Folder folder = (Folder) currentNode.getData();
-            List<FileSystemItem> contents = folder.getContents();
-    
-            // Search for and delete the specified data from the folder's contents
-            contents.removeIf(item -> item.equals(data));
-        }
-        children = null;
-
-    }
-    
-    public void addChild(TreeNode<T> child) {
-        root.getChildren().add(child);
-        child.getData().setPath(root.getData().getName()+"/"+child.getData().getName());
-    }
-
-    public static void main(String[] args) {
-        // Creating a sample file system tree
-        GeneralTree<FileSystemItem> fileSystemTree = new GeneralTree<>(new Folder("Root"));
-
-        Folder documentsFolder = new Folder("Documents");
-        Folder picturesFolder = new Folder("Pictures");
-        Folder subfolder = new Folder("Subfolder");
-        Folder subsubfolder = new Folder("SubSubFolder");
-        Folder subsubsubfolder = new Folder("SubSubSubFolder");
-
-        File document1 = new File("Document1.txt", "This is the content of Document1.");
-        File document2 = new File("Document2.txt", "Content of Document2.");
-        File document3 = new File("Document3.txt", "This is the content of Document3.");
-        File picture1 = new File("Picture1.jpg", "Content of Picture1.");
-
-        fileSystemTree.addChild(new TreeNode<>(documentsFolder));
-        fileSystemTree.addChild(new TreeNode<>(picturesFolder));
-
-       
-        documentsFolder.addFileSystemItem(subfolder);
-        subfolder.addFileSystemItem(subsubfolder);
-        subsubfolder.addFileSystemItem(subsubsubfolder);
-        subsubsubfolder.addFileSystemItem(picture1);
-        fileSystemTree.deleteNode(subfolder);
-        //documentsFolder.addFolder(subfolder);
-        
-            
-
-        //fileSystemTree.deleteNode(fileSystemTree.getRoot().getData());
-        //fileSystemTree.deleteNode("Document1.txt");
-
-        // Printing the file system tree
-        //fileSystemTree.printTree();
-
-        // Deleting a node and its subtree (e.g., a folder or a file)
-        //fileSystemTree.deleteNode(picturesFolder);
-        
-        //fileSystemTree.deleteNode(documentsFolder);
-
-        // Printing the modified file system tree
-        fileSystemTree.printTree();
-        
-        System.out.println(picture1.getPath());
-        
-        //fileSystemTree.search(where,what)
     }
 }

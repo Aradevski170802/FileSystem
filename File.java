@@ -1,3 +1,4 @@
+import java.util.List;
 import java.util.Objects;
 
 public class File extends FileSystemItem {
@@ -19,23 +20,25 @@ public class File extends FileSystemItem {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null) return false;
-        if (!super.equals(obj)) return false;
-        if (obj instanceof File file) {
-            return Objects.equals(content, file.content);
+        if (this == obj) {
+            return true;
         }
-        return false;
-        
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        File otherFile = (File) obj;
+        return this.getPath().equals(otherFile.getPath());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), content);
+        return Objects.hash(this.getPath());
     }
 
     @Override
     public String toString() {
         return "File: " + super.toString();
     }
+
+
 }

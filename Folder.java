@@ -1,41 +1,23 @@
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
-class Folder extends FileSystemItem {
-    private List<FileSystemItem> contents;
-    
+class Folder extends TreeNode<FileSystemItem<?>> {
 
     public Folder(String name) {
-        super(name);
-        this.contents = new ArrayList<>();
+        super(new FileSystemItem<>(name), name, name);
     }
 
-    public List<FileSystemItem> getContents() {
-        return contents;
+    public List<TreeNode<FileSystemItem<?>>> getContents() {
+        return getChildren();
     }
 
-    public void addFileSystemItem(FileSystemItem item) {
-        
-        item.setPath(this.getPath()+"/"+item.getName());
-        contents.add(item);
+    public void addFileSystemItem(TreeNode<FileSystemItem<?>> item) {
+        item.getData().setPath(getPath() + "/" + item.getData().getName());
+        getContents().add(item);
     }
 
-    public void removeFileSystemItem(FileSystemItem item) {
-        contents.remove(item);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        Folder folder = (Folder) obj;
-        return super.equals(obj) && Objects.equals(contents, folder.contents);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), contents);
+    public void removeFileSystemItem(FileSystemItem<?> item) {
+        getContents().remove(item);
     }
 
     @Override

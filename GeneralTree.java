@@ -1,5 +1,3 @@
-
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -9,10 +7,17 @@ public class GeneralTree extends TreeNode<FileSystemItem<?>> {
     }
 
     public void addChild(TreeNode<FileSystemItem<?>> child) {
-        getChildren().add(child);
-        child.getData().setPath(getPath() + "/" + child.getData().getName());
+        
+        if(!getPath().equals(null)){
+            child.getData().setPath(getPath() + "/" + child.getData().getName());
+            child.setPath(getPath() + "/" + child.getData().getName());
+        }else{
+            child.getData().setPath(this.getName() + "/" + child.getData().getName());
+            child.setPath(this.getName() + "/" + child.getData().getName());
+        }
+        getChildren().add(child);   
     }
-
+    
     public void deleteFileSystemItem(FileSystemItem<?> itemToDelete) {
         if (!isDeletable(itemToDelete)) {
             // Cannot delete non-FileSystemItem items
@@ -31,9 +36,9 @@ public class GeneralTree extends TreeNode<FileSystemItem<?>> {
             TreeNode<FileSystemItem<?>> child = iterator.next();
             if (child.getData().equals(itemToDelete)) {
                 iterator.remove();
+                child.getChildren().removeAll(children);
                 return;
             }
-
             // Recursively search for the item in the children, considering FileSystemItem
             if (child.getData() instanceof FileSystemItem) {
                 deleteFileSystemItem(child, itemToDelete);
@@ -45,7 +50,9 @@ public class GeneralTree extends TreeNode<FileSystemItem<?>> {
         return item instanceof FileSystemItem;
     }
 
-    
+    public void showFolderContents(TreeNode<FileSystemItem<?>> node) {
+        printTree(node,0);
+    }
 
     @Override
     public void printTree() {
@@ -62,7 +69,7 @@ public class GeneralTree extends TreeNode<FileSystemItem<?>> {
             indentation.append("  ");
         }
 
-        System.out.println(indentation + node.getData().getName() + " (Path: " + node.getData().getPath() + ")");
+        System.out.println(indentation + node.getData().getName() + " (Path: " + node.getPath() + ")");
 
         for (TreeNode<FileSystemItem<?>> child : node.getChildren()) {
             printTree(child, depth + 1);

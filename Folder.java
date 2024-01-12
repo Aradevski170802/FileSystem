@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.util.List;
 
 class Folder extends TreeNode<FileSystemItem<?>> {
@@ -12,9 +11,12 @@ class Folder extends TreeNode<FileSystemItem<?>> {
     }
 
     public void addFileSystemItem(TreeNode<FileSystemItem<?>> item) {
-        item.getData().setPath(getPath() + "/" + item.getData().getName());
+        String itemPath = getPath() + "/" + item.getData().getName();;
+        item.getData().setPath(itemPath);
+        item.setPath(itemPath);
         getContents().add(item);
     }
+    
 
     public void removeFileSystemItem(FileSystemItem<?> item) {
         getContents().remove(item);

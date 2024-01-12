@@ -1,4 +1,3 @@
-
 import java.util.Objects;
 
 public class FileSystemItem<T> {
@@ -10,16 +9,16 @@ public class FileSystemItem<T> {
         this.path = path;
     }
 
+    public FileSystemItem(String name) {
+        this.name = name;
+    }
+
     public void setPath(String path) {
         this.path = path;
     }
 
     public String getPath() {
         return this.path;
-    }
-
-    public FileSystemItem(String name) {
-        this.name = name;
     }
 
     public String getName() {
@@ -35,12 +34,15 @@ public class FileSystemItem<T> {
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
+    
         FileSystemItem<?> that = (FileSystemItem<?>) obj;
-        return name.equals(that.name);
+    
+        return Objects.equals(getName(), that.getName());
     }
-
+    
     @Override
     public int hashCode() {
-        return name.hashCode();
+        return Objects.hash(getName());
     }
+    
 }

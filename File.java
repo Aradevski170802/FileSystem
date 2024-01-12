@@ -1,7 +1,7 @@
 import java.util.List;
 import java.util.Objects;
 
-public class File extends FileSystemItem {
+public class File<T> extends FileSystemItem<T> {
     private String content;
     //void setPath
 
@@ -26,7 +26,7 @@ public class File extends FileSystemItem {
         if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
-        File otherFile = (File) obj;
+        File<T> otherFile = (File) obj;
         return this.getPath().equals(otherFile.getPath());
     }
 

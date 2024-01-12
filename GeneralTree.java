@@ -2,8 +2,8 @@ import java.util.Iterator;
 import java.util.List;
 
 public class GeneralTree extends TreeNode<FileSystemItem<?>> {
-    public GeneralTree(String rootName) {
-        super(new FileSystemItem<>(rootName), rootName, rootName);
+    public GeneralTree(String rootName, long size) {
+        super(new FileSystemItem<>(rootName, size), rootName, rootName);
     }
 
     public void addChild(TreeNode<FileSystemItem<?>> child) {
@@ -35,7 +35,13 @@ public class GeneralTree extends TreeNode<FileSystemItem<?>> {
         while (iterator.hasNext()) {
             TreeNode<FileSystemItem<?>> child = iterator.next();
             if (child.getData().equals(itemToDelete)) {
+                child.setPath(null);
+                child.setData(null);
                 iterator.remove();
+                for(int i = 0; i < child.getChildren().size(); i++){
+                    child.getChildren().get(i).setPath(null);
+                    child.getChildren().get(i).setData(null);
+                }
                 child.getChildren().removeAll(children);
                 return;
             }

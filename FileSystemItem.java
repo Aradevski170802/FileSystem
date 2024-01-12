@@ -2,17 +2,26 @@ import java.util.Objects;
 
 public class FileSystemItem<T> {
     private String name;
+    private long size;
     private String path = null;
 
-    public FileSystemItem(String name, String path) {
+    public FileSystemItem(String name, String path, long size) {
         this.name = name;
         this.path = path;
+        this.size = size;
     }
 
-    public FileSystemItem(String name) {
+    public FileSystemItem(String name, long size) {
         this.name = name;
+        this.size = size;
+    }
+    public long getSize() {
+        return this.size;
     }
 
+    protected void setSize(long size) {
+        this.size = size;
+    }
     public void setPath(String path) {
         this.path = path;
     }

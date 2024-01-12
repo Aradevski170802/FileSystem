@@ -6,7 +6,7 @@ public class TreeNode<T extends FileSystemItem<?>> extends FileSystemItem<T> {
     private List<TreeNode<T>> children;
 
     public TreeNode(T data, String name, String path) {
-        super(name, path);
+        super(name, path, data.getSize());
         this.data = data;
         this.children = new ArrayList<>();
     }
@@ -15,6 +15,8 @@ public class TreeNode<T extends FileSystemItem<?>> extends FileSystemItem<T> {
         return data;
     }
 
+    public void setData(T data){this.data = data;}
+
     public List<TreeNode<T>> getChildren() {
         return children;
     }
@@ -22,6 +24,7 @@ public class TreeNode<T extends FileSystemItem<?>> extends FileSystemItem<T> {
     public void addFileSystemItem(TreeNode<T> item) {
         item.getData().setPath(getPath() + "/" + item.getData().getName());
         children.add(item);
+        data.setSize(getSize()+item.getSize());
     }
 
     public void printTree() {

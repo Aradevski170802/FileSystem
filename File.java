@@ -2,20 +2,18 @@ import java.util.List;
 import java.util.Objects;
 
 public class File<T> extends FileSystemItem<T> {
-    private String content;
-    //void setPath
-
-    public File(String name, String content) {
-        super(name);
-        this.content = content;
+    private long size;
+    
+    public File(String name, long size) {
+        super(name,size);
     }
 
-    public String getContent() {
-        return content;
+    public long getSize() {
+        return size;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    protected void setSize(long size) {
+        this.size = size;
     }
 
     @Override
@@ -39,6 +37,4 @@ public class File<T> extends FileSystemItem<T> {
     public String toString() {
         return "File: " + super.toString();
     }
-
-
 }

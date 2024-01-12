@@ -1,33 +1,36 @@
+import java.util.List;
 import java.util.Objects;
 
-public class File extends FileSystemItem {
-    private String content;
-
-    public File(String name, String content) {
-        super(name);
-        this.content = content;
+public class File<T> extends FileSystemItem<T> {
+    private long size;
+    
+    public File(String name, long size) {
+        super(name,size);
     }
 
-    public String getContent() {
-        return content;
+    public long getSize() {
+        return size;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    protected void setSize(long size) {
+        this.size = size;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        if (!super.equals(obj)) return false;
-        File file = (File) obj;
-        return Objects.equals(content, file.content);
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        File<T> otherFile = (File) obj;
+        return this.getPath().equals(otherFile.getPath());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), content);
+        return Objects.hash(this.getPath());
     }
 
     @Override

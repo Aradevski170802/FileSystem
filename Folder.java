@@ -1,39 +1,36 @@
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
-public class Folder extends FileSystemItem {
-    private List<FileSystemItem> contents;
-
+class Folder extends TreeNode<FileSystemItem<?>> {
     public Folder(String name) {
-        super(name);
-        this.contents = new ArrayList<>();
+        super(new FileSystemItem<>(name,0), name, name);
+    }
+    
+    public List<TreeNode<FileSystemItem<?>>> getContents() {
+        return getChildren();
     }
 
-    public List<FileSystemItem> getContents() {
-        return contents;
+    public void addFileSystemItem(TreeNode<FileSystemItem<?>> item) {
+        String itemPath = getPath() + "/" + item.getData().getName();;
+        item.getData().setPath(itemPath);
+        item.setPath(itemPath);
+        getContents().add(item);
+        this.setNewSize();
+    }
+    
+
+    public void removeFileSystemItem(FileSystemItem<?> item) {
+        getContents().remove(item);
     }
 
-    public void addFileSystemItem(FileSystemItem item) {
-        contents.add(item);
-    }
-
-    public void removeFileSystemItem(FileSystemItem item) {
-        contents.remove(item);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        Folder folder = (Folder) obj;
-        return Objects.equals(getName(), folder.getName()) &&
-                Objects.equals(contents, folder.contents);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getName(), contents);
+    protected void setNewSize(){
+        // A folder does not have a size of its own but contains files and folders which do.
+        // Therefore the size is propagated to all children.
+        long currentSize = 0;
+        for (TreeNode<FileSystemItem<?>> child : getContents()) {
+            currentSize+=child.getSize();
+        }
+        this.setSize(currentSize);
+        
     }
 
     @Override

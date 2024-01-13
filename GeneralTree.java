@@ -5,6 +5,7 @@ public class GeneralTree extends TreeNode<FileSystemItem<?>> {
     public GeneralTree(String rootName, long size) {
         super(new FileSystemItem<>(rootName, size), rootName);
         getData().setPath(rootName);
+        setPath(rootName);
     }
 
     public void addChild(TreeNode<FileSystemItem<?>> child) {
@@ -30,25 +31,28 @@ public class GeneralTree extends TreeNode<FileSystemItem<?>> {
         deleteFileSystemItem(this, itemToDelete);
     }
 
+    public String searchDFS(String targetName){
+        StringBuilder str = new StringBuilder();
+        return searchDFS(this, targetName, str);
+    } 
 
-    public String searchDFS(TreeNode<FileSystemItem<?>> currentNode, String targetName) {
+    private String searchDFS(TreeNode<FileSystemItem<?>> currentNode, String targetName, StringBuilder allFoundItems) {
         // Base case: If the current node is null or the target is found, return the node
         if (currentNode == null || currentNode.getData().getName().equals(targetName)) {
-            return currentNode.getPath();
+            allFoundItems.append(currentNode.getPath()+"\n");
         }
 
         // Recursive case: Search in each child of the current node
         for (TreeNode<FileSystemItem<?>> child : currentNode.getChildren()) {
-            String result = searchDFS(child, targetName);
-            if (result != null) {
-                // If the target is found in any subtree, return the result
-                return result;
-            }
+            searchDFS(child, targetName, allFoundItems);
         }
 
+        // Target not found in the current node or its subtrees
+        if(allFoundItems.equals("")){
+            return "Item not found!";
+        }
 
-    // Target not found in the current node or its subtrees
-        return null;
+        return allFoundItems.toString();
     }
 
     private void deleteFileSystemItem(TreeNode<FileSystemItem<?>> currentNode, FileSystemItem<?> itemToDelete) {

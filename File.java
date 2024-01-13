@@ -1,4 +1,3 @@
-import java.util.List;
 import java.util.Objects;
 
 public class File<T> extends FileSystemItem<T> {

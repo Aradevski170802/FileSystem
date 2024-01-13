@@ -5,12 +5,6 @@ public class FileSystemItem<T> {
     private long size;
     private String path = null;
 
-    public FileSystemItem(String name, String path, long size) {
-        this.name = name;
-        this.path = path;
-        this.size = size;
-    }
-
     public FileSystemItem(String name, long size) {
         this.name = name;
         this.size = size;
@@ -33,6 +27,8 @@ public class FileSystemItem<T> {
     public String getName() {
         return name;
     }
+
+    protected void setName(String name){this.name = name;}
 
     @Override
     public String toString() {

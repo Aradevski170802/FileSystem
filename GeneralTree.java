@@ -3,19 +3,21 @@ import java.util.List;
 
 public class GeneralTree extends TreeNode<FileSystemItem<?>> {
     public GeneralTree(String rootName, long size) {
-        super(new FileSystemItem<>(rootName, size), rootName, rootName);
+        super(new FileSystemItem<>(rootName, size), rootName);
+        getData().setPath(rootName);
     }
 
     public void addChild(TreeNode<FileSystemItem<?>> child) {
         
-        if(!getPath().equals(null)){
+        if(!getPath().equals("")){
             child.getData().setPath(getPath() + "/" + child.getData().getName());
             child.setPath(getPath() + "/" + child.getData().getName());
         }else{
             child.getData().setPath(this.getName() + "/" + child.getData().getName());
             child.setPath(this.getName() + "/" + child.getData().getName());
         }
-        getChildren().add(child);   
+        getChildren().add(child);
+        getData().setSize(getSize()+child.getSize());   
     }
     
     public void deleteFileSystemItem(FileSystemItem<?> itemToDelete) {
@@ -28,21 +30,42 @@ public class GeneralTree extends TreeNode<FileSystemItem<?>> {
         deleteFileSystemItem(this, itemToDelete);
     }
 
+
+    public String searchDFS(TreeNode<FileSystemItem<?>> currentNode, String targetName) {
+        // Base case: If the current node is null or the target is found, return the node
+        if (currentNode == null || currentNode.getData().getName().equals(targetName)) {
+            return currentNode.getPath();
+        }
+
+        // Recursive case: Search in each child of the current node
+        for (TreeNode<FileSystemItem<?>> child : currentNode.getChildren()) {
+            String result = searchDFS(child, targetName);
+            if (result != null) {
+                // If the target is found in any subtree, return the result
+                return result;
+            }
+        }
+
+
+    // Target not found in the current node or its subtrees
+        return null;
+    }
+
     private void deleteFileSystemItem(TreeNode<FileSystemItem<?>> currentNode, FileSystemItem<?> itemToDelete) {
         List<TreeNode<FileSystemItem<?>>> children = currentNode.getChildren();
         Iterator<TreeNode<FileSystemItem<?>>> iterator = children.iterator();
-
+    
         while (iterator.hasNext()) {
             TreeNode<FileSystemItem<?>> child = iterator.next();
             if (child.getData().equals(itemToDelete)) {
-                child.setPath(null);
-                child.setData(null);
                 iterator.remove();
-                for(int i = 0; i < child.getChildren().size(); i++){
-                    child.getChildren().get(i).setPath(null);
-                    child.getChildren().get(i).setData(null);
-                }
                 child.getChildren().removeAll(children);
+                child.setData(null);
+                child.setPath(null);
+                child.setName(null);
+                if (child instanceof Folder) {
+                    ((Folder) child).removeFileSystemItem(itemToDelete);
+                }
                 return;
             }
             // Recursively search for the item in the children, considering FileSystemItem
@@ -51,34 +74,9 @@ public class GeneralTree extends TreeNode<FileSystemItem<?>> {
             }
         }
     }
+    
 
     private boolean isDeletable(FileSystemItem<?> item) {
         return item instanceof FileSystemItem;
-    }
-
-    public void showFolderContents(TreeNode<FileSystemItem<?>> node) {
-        printTree(node,0);
-    }
-
-    @Override
-    public void printTree() {
-        printTree(this, 0);
-    }
-
-    private void printTree(TreeNode<FileSystemItem<?>> node, int depth) {
-        if (node == null) {
-            return;
-        }
-
-        StringBuilder indentation = new StringBuilder();
-        for (int i = 0; i < depth; i++) {
-            indentation.append("  ");
-        }
-
-        System.out.println(indentation + node.getData().getName() + " (Path: " + node.getPath() + ")");
-
-        for (TreeNode<FileSystemItem<?>> child : node.getChildren()) {
-            printTree(child, depth + 1);
-        }
     }
 }

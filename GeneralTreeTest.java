@@ -9,7 +9,7 @@ public class GeneralTreeTest {
 
     @Test
     public void testAddChild() {
-        GeneralTree tree = new GeneralTree("Root");
+        GeneralTree tree = new GeneralTree("Root",0);
         Folder rootFolder = new Folder("RootFolder");
         Folder subFolder = new Folder("Subfolder");
 
@@ -25,14 +25,14 @@ public class GeneralTreeTest {
 
     @Test
     public void testDeleteFileSystemItem() {
-        GeneralTree tree = new GeneralTree("Root");
-        Folder rootFolder = new Folder("RootFolder");
+        GeneralTree tree = new GeneralTree("Root",0);
+        TreeNode<FileSystemItem<?>> rootFolder = new Folder("RootFolder");
         Folder subFolder = new Folder("Subfolder");
 
         tree.addChild(rootFolder);
         rootFolder.addFileSystemItem(subFolder);
 
-        tree.deleteFileSystemItem(subFolder.getData());
+        tree.deleteFileSystemItem(subFolder);
 
         List<TreeNode<FileSystemItem<?>>> children = tree.getChildren();
         assertFalse(children.contains(subFolder));
@@ -40,7 +40,7 @@ public class GeneralTreeTest {
 
     @Test
     public void testShowFolderContents() {
-        GeneralTree tree = new GeneralTree("Root");
+        GeneralTree tree = new GeneralTree("Root",0);
         Folder rootFolder = new Folder("RootFolder");
         Folder subFolder = new Folder("Subfolder");
 
@@ -51,12 +51,12 @@ public class GeneralTreeTest {
         ByteArrayOutputStream outContent = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outContent));
 
-        tree.showFolderContents(tree);
+        tree.printTree();
 
         // Reset System.out to its original state
         System.setOut(System.out);
 
         // Verify the printed output
-        assertEquals("Root (Path: Root)\n  RootFolder (Path: Root/RootFolder)\n    Subfolder (Path: Root/RootFolder/Subfolder)\n", outContent.toString());
+        assertEquals("Root (Path: Root)\n  RootFolder\n    Subfolder\n", outContent.toString());
     }
 }

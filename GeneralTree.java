@@ -7,30 +7,7 @@ public class GeneralTree extends TreeNode<FileSystemItem<?>> {
         getData().setPath(rootName);
         setPath(rootName);
     }
-
-    public void addChild(TreeNode<FileSystemItem<?>> child) {
-        
-        if(!getPath().equals("")){
-            child.getData().setPath(getPath() + "/" + child.getData().getName());
-            child.setPath(getPath() + "/" + child.getData().getName());
-        }else{
-            child.getData().setPath(this.getName() + "/" + child.getData().getName());
-            child.setPath(this.getName() + "/" + child.getData().getName());
-        }
-        getChildren().add(child);
-        getData().setSize(getSize()+child.getSize());   
-    }
     
-    public void deleteFileSystemItem(FileSystemItem<?> itemToDelete) {
-        if (!isDeletable(itemToDelete)) {
-            // Cannot delete non-FileSystemItem items
-            System.out.println("Cannot delete the specified item.");
-            return;
-        }
-
-        deleteFileSystemItem(this, itemToDelete);
-    }
-
     public String searchDFS(String targetName){
         StringBuilder str = new StringBuilder();
         return searchDFS(this, targetName, str);
@@ -54,22 +31,27 @@ public class GeneralTree extends TreeNode<FileSystemItem<?>> {
 
         return allFoundItems.toString();
     }
+    
+    public void deleteFileSystemItem(TreeNode<FileSystemItem<?>> itemToDelete) {
+        if(searchDFS(itemToDelete.getName())==""){
+            System.out.println( itemToDelete.getName() +" does not exist within the drive.");
+        }
+        deleteFileSystemItem(this, itemToDelete);
+    }
 
-    private void deleteFileSystemItem(TreeNode<FileSystemItem<?>> currentNode, FileSystemItem<?> itemToDelete) {
+
+    private void deleteFileSystemItem(TreeNode<FileSystemItem<?>> currentNode, TreeNode<FileSystemItem<?>> itemToDelete) {
         List<TreeNode<FileSystemItem<?>>> children = currentNode.getChildren();
         Iterator<TreeNode<FileSystemItem<?>>> iterator = children.iterator();
     
         while (iterator.hasNext()) {
             TreeNode<FileSystemItem<?>> child = iterator.next();
-            if (child.getData().equals(itemToDelete)) {
+            if (child.equals(itemToDelete)) {
                 iterator.remove();
                 child.getChildren().removeAll(children);
                 child.setData(null);
                 child.setPath(null);
                 child.setName(null);
-                if (child instanceof Folder) {
-                    ((Folder) child).removeFileSystemItem(itemToDelete);
-                }
                 return;
             }
             // Recursively search for the item in the children, considering FileSystemItem
@@ -77,10 +59,5 @@ public class GeneralTree extends TreeNode<FileSystemItem<?>> {
                 deleteFileSystemItem(child, itemToDelete);
             }
         }
-    }
-    
-
-    private boolean isDeletable(FileSystemItem<?> item) {
-        return item instanceof FileSystemItem;
     }
 }

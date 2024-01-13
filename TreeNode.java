@@ -23,25 +23,28 @@ public class TreeNode<T extends FileSystemItem<?>> extends FileSystemItem<T> {
     }
 
     public void addFileSystemItem(TreeNode<T> item) {
-        // System.out.println(item.getSize()+"  <--->  "+item.getData().getSize() + "  "+item.getName());
-        item.getData().setPath(getPath() + "/" + item.getData().getName());
-        item.setPath(getPath() + "/" + item.getData().getName());
-        children.add(item);
-        this.setNewSize();     
+        if (data instanceof Folder || this instanceof GeneralTree) {
+            item.getData().setPath(getPath() + "/" + item.getData().getName());
+            item.setPath(getPath() + "/" + item.getData().getName());
+            getChildren().add(item);
+            // ((Folder) this).setNewSize();
+        } else {
+            System.out.println("Cannot add FileSystemItem to "+data.getName());
+        }
     }
 
-    protected void setNewSize(){
-        // A folder does not have a size of its own but contains files and folders which do.
-        // Therefore the size is propagated to all children.
-        long currentSize = 0;
-        for (int i = 0; i <getChildren().size(); i++) {
-            // System.out.println(currentSize +" This is the new size for " + getName());
-            currentSize+=getChildren().get(i).getData().getSize();
-        }
-        this.getData().setSize(currentSize);
-        this.setSize(currentSize);
+    // protected void setNewSize(){
+    //     // A folder does not have a size of its own but contains files and folders which do.
+    //     // Therefore the size is propagated to all children.
+    //     long currentSize = 0;
+    //     for (int i = 0; i < getChildren().size(); i++) {
+    //         // System.out.println(currentSize +" This is the new size for " + getName());
+    //         currentSize+=getChildren().get(i).getData().getSize();
+    //     }
+    //     this.getData().setSize(currentSize);
+    //     this.setSize(currentSize);
         
-    }
+    // }
 
     public void printTree() {
         printTree(this, 0);

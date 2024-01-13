@@ -21,11 +21,16 @@ public class Main {
         TreeNode<FileSystemItem<?>> subfolder2 = new TreeNode<>(new Folder("Subfolder2"), "Subfolder2");
         subfolder1.addFileSystemItem(file2);
         folder2.addFileSystemItem(file69);
+        file1.addFileSystemItem(subfolder2);
         //subfolder1.addFileSystemItem(file2);
         subfolder1.addFileSystemItem(subfolder2);
 
         // Print the tree
+        //tree.deleteFileSystemItem(folder1);
         System.out.println("Original Tree:");
+        tree.deleteFileSystemItem(new TreeNode<>(new FileSystemItem<>("File5",20), "File5"));
+        tree.printTree();
+        
         //tree.deleteFileSystemItem(subfolder1.getData());
         //tree.deleteFileSystemItem(file1.getData());
         
@@ -44,11 +49,11 @@ public class Main {
         // tree.deleteFileSystemItem(folder1);
         // tree.printTree();
         // System.out.println(folder1.getData().getSize());
-        tree.printTree();
+    
         
         //System.out.println(tree.searchItemByName("File1"));
         //tree.showFolderContents(subfolder1);
         //System.out.println(file1.getPath());
-        System.out.println(tree.searchDFS("File1"));
+        //System.out.println(tree.searchDFS("File1"));
     }
 }
